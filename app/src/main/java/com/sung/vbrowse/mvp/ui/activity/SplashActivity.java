@@ -1,8 +1,5 @@
 package com.sung.vbrowse.mvp.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
 import com.sung.vbrowse.R;
 import com.sung.vbrowse.base.BaseActivity;
 
