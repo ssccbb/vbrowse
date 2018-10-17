@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="config_activity_animation_time">200</integer>
+    <integer name="config_toast_animation_time">1000</integer>
+    <integer name="config_toast_animation_time_short">500</integer>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--  -->
+    <dimen name="dp_2">2dp</dimen>
+    <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_15">15dp</dimen>
+    <dimen name="dp_20">20dp</dimen>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="dp_40">40dp</dimen>
+    <dimen name="dp_50">50dp</dimen>
+    <dimen name="dp_70">70dp</dimen>
+    <!-- common -->
+    <dimen name="common_divider_decoration">0dp</dimen>
+    <dimen name="common_divider_normal_height">1dp</dimen>
+    <dimen name="common_divider_larger_height">10dp</dimen>
+    <dimen name="common_tittle_text_size">20sp</dimen>
+    <dimen name="common_navigation_text_size">16sp</dimen>
+    <!--indicator-->
+    <dimen name="view_tab_indicator_width">22dp</dimen>
+    <dimen name="view_tab_indicator_text_size">10sp</dimen>
+</resources>

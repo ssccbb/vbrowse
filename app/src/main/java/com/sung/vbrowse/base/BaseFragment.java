@@ -22,6 +22,7 @@ import butterknife.Unbinder;
  */
 public abstract class BaseFragment extends Fragment {
     private Unbinder unbinder;
+    protected Bundle mBundleData;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,8 +40,21 @@ public abstract class BaseFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        if (getArguments() != null){
+            mBundleData = getArguments();
+        }
+        init();
+    }
+
     protected int getLayoutId() {
         return -1;
+    }
+
+    protected void init(){
+
     }
 
     protected SharedPreferences getPreferences() {
