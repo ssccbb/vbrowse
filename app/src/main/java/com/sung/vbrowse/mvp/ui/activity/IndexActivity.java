@@ -2,6 +2,8 @@ package com.sung.vbrowse.mvp.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 
 import com.sung.vbrowse.R;
@@ -21,22 +23,13 @@ public class IndexActivity extends BaseActivity implements ViewPager.OnPageChang
     ViewPager mPager;
 
     @Override
-    protected int getLayoutID() {
-        return R.layout.activity_index;
-    }
-
-    @Override
-    protected void init() {
-        super.init();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_index);
         mHomeAdapter = new IndexAdapter(this, getSupportFragmentManager());
         mPager.setAdapter(mHomeAdapter);
         mPager.setOffscreenPageLimit(mHomeAdapter.getCount());
         mPager.addOnPageChangeListener(this);
-    }
-
-    @Override
-    protected void setData() {
-        super.setData();
     }
 
     @Override

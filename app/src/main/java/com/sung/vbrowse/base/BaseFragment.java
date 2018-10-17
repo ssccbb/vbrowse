@@ -75,7 +75,7 @@ public abstract class BaseFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (getActivity() != null) {
-            EventBus.getDefault().register(getActivity());
+//            EventBus.getDefault().register(getActivity());
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         if (getActivity() != null) {
-            EventBus.getDefault().unregister(getActivity());
+//            EventBus.getDefault().unregister(getActivity());
         }
         if (unbinder != null) {
             unbinder.unbind();

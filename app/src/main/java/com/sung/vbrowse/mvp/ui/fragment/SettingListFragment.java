@@ -6,24 +6,21 @@ import com.sung.vbrowse.R;
 import com.sung.vbrowse.base.BaseFragment;
 import com.sung.vbrowse.interfaces.IFileListFragmentView;
 import com.sung.vbrowse.mvp.presenter.FileListFragmentPresenter;
+
 import butterknife.BindView;
 
 /**
  * @author: sung
  * @date: 2018/10/17
- * @Description: 文件列表页面
+ * @Description: 设置列表页面
  */
-public class FileListFragment extends BaseFragment implements IFileListFragmentView {
-    private FileListFragmentPresenter mPresenter;
-
-    @BindView(R.id.rc_list)
-    RecyclerView mList;
+public class SettingListFragment extends BaseFragment {
 
     private static class Holder {
-        private static FileListFragment INSTANCE = new FileListFragment();
+        private static SettingListFragment INSTANCE = new SettingListFragment();
     }
 
-    public static FileListFragment getInstance(){
+    public static SettingListFragment getInstance(){
         return Holder.INSTANCE;
     }
 
@@ -35,12 +32,6 @@ public class FileListFragment extends BaseFragment implements IFileListFragmentV
     @Override
     protected void init() {
         super.init();
-        mPresenter = new FileListFragmentPresenter(this);
-        mPresenter.showFileList(getContext());
     }
 
-    @Override
-    public RecyclerView getRecyclerView() {
-        return mList;
-    }
 }

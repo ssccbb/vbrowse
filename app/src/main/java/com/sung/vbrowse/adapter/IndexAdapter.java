@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 import com.sung.vbrowse.base.BaseFragment;
+import com.sung.vbrowse.mvp.ui.fragment.FileListFragment;
+import com.sung.vbrowse.mvp.ui.fragment.SettingListFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,8 @@ public class IndexAdapter extends FragmentPagerAdapter {
 
     private void initFragments(){
         if (fragments == null) fragments = new ArrayList();
+        fragments.add(FileListFragment.getInstance());
+        fragments.add(SettingListFragment.getInstance());
     }
 
     @Override
