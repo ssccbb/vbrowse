@@ -7,22 +7,32 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import org.greenrobot.eventbus.EventBus;
+
 import butterknife.ButterKnife;
 
 /**
  * @author: sung
  * @date: 2018/10/15
- * @Description:
+ * @Description: activity基类
  */
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutID());
-        ButterKnife.bind(this);
+        /* ButterKnife */ButterKnife.bind(this);
+        /* EventBus */EventBus.getDefault().register(this);
         init();
         setData();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        System.gc();
     }
 
     protected int getLayoutID() {
@@ -70,9 +80,4 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        System.gc();
-    }
 }
