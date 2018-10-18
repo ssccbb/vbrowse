@@ -31,21 +31,21 @@ public class FileListFragmentPresenter {
 
     /**
      * 展示手机上视频文件列表
-     * */
-    public void showFileList(Context context){
+     */
+    public void showFileList(Context context) {
         RecyclerView mList = mFileListView.getRecyclerView();
         mList.setHasFixedSize(true);
         mList.setItemAnimator(new DefaultItemAnimator());
         mList.setLayoutManager(new LinearLayoutManager(context));
         ArrayList<VideoInfo> mData = mFileListContract.getVideoInfo(context);
-        mFileListAdapter = new FileListAdapter(mData);
+        mFileListAdapter = new FileListAdapter(context, mData);
         mList.setAdapter(mFileListAdapter);
     }
 
     /**
      * 刷新列表数据
-     * */
-    public void notifyFileList(List<VideoInfo> data,boolean clear){
-        mFileListAdapter.addData(data,clear);
+     */
+    public void notifyFileList(List<VideoInfo> data, boolean clear) {
+        mFileListAdapter.addData(data, clear);
     }
 }

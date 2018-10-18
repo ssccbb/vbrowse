@@ -186,6 +186,8 @@ public class MediaStoreUtils {
             do {
                 VideoInfo info = new VideoInfo();
 
+                info.type = VPlayerHelper.PlayerMode.LOCAL;
+                info.netUrl = "";
                 info.filePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.DATA));
                 info.mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.MIME_TYPE));
                 info.title = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Media.TITLE));
