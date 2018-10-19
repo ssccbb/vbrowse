@@ -31,5 +31,5 @@ public interface IPlayerView {
 
     VideoInfo getVideoInfo();
 
-    Activity getContext();
+    Activity getActivity();
 }

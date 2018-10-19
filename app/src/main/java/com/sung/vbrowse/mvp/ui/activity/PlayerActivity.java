@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Toast;
@@ -19,6 +18,8 @@ import com.sung.vbrowse.base.BaseActivity;
 import com.sung.vbrowse.interfaces.IPlayerView;
 import com.sung.vbrowse.mvp.model.VideoInfo;
 import com.sung.vbrowse.mvp.presenter.PlayerPresenter;
+import com.sung.vbrowse.utils.KeyboardUtils;
+import com.sung.vbrowse.utils.ScreenUtils;
 import com.sung.vbrowse.utils.VPlayerHelper;
 
 import butterknife.BindView;
@@ -38,6 +39,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ScreenUtils.setFullScreen(this);
         setContentView(R.layout.activity_player);
         Vitamio.isInitialized(this);
 
@@ -49,12 +51,14 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
         mHelper = new VPlayerHelper.Builder(this)
                 .addVideoInfo(mVideoInfo)
                 .build();
-        mPresenter = new PlayerPresenter(this,mHelper);
+        mPresenter = new PlayerPresenter(this, mHelper);
+        //音频模式
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         //初始化
         mPresenter.initPlayer();
         mProgress.getIndeterminateDrawable().setColorFilter(
-                ContextCompat.getColor(getContext(),R.color.ThemeColor),PorterDuff.Mode.MULTIPLY);
+                ContextCompat.getColor(getContext(), R.color.ThemeColor),
+                PorterDuff.Mode.MULTIPLY);
     }
 
     @Override
@@ -107,7 +111,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
     }
 
     @Override
-    public Activity getContext() {
+    public Activity getActivity() {
         return this;
     }
 
@@ -123,15 +127,15 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
         mHelper.onDetroy();
     }
 
-    public static void open(Context context, VideoInfo video){
+    public static void open(Context context, VideoInfo video) {
         if (context == null || video == null) {
             Log.e(PlayerActivity.class.getSimpleName(), "open exception " +
-                    "--> context empty or video empty,please check intent data!" );
+                    "--> context empty or video empty,please check intent data!");
             return;
         }
 
-        Intent goTo = new Intent(context,PlayerActivity.class);
-        goTo.putExtra(PlayerActivity.class.getSimpleName(),video);
+        Intent goTo = new Intent(context, PlayerActivity.class);
+        goTo.putExtra(PlayerActivity.class.getSimpleName(), video);
         context.startActivity(goTo);
     }
 }

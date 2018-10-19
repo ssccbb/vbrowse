@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.sung.vbrowse.base.BaseApplication;
-
 /**
  * <pre>
  *     author: Blankj
@@ -36,8 +34,8 @@ public final class ScreenUtils {
      *
      * @return 屏幕宽
      */
-    public static int getScreenWidth() {
-        return BaseApplication.getInstance().getResources().getDisplayMetrics().widthPixels;
+    public static int getScreenWidth(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels;
     }
 
     /**
@@ -45,8 +43,8 @@ public final class ScreenUtils {
      *
      * @return 屏幕高
      */
-    public static int getScreenHeight() {
-        return BaseApplication.getInstance().getResources().getDisplayMetrics().heightPixels;
+    public static int getScreenHeight(Context context) {
+        return context.getResources().getDisplayMetrics().heightPixels;
     }
 
     /**
@@ -59,6 +57,14 @@ public final class ScreenUtils {
         activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        hideNavigation(activity);
+    }
+
+    /**
+     * 隐藏虚拟按键
+     * */
+    public static void hideNavigation(Activity activity){
+        activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 
     /**
@@ -89,8 +95,8 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isLandscape() {
-        return BaseApplication.getInstance().getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
+    public static boolean isLandscape(Context context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
     }
 
     /**
@@ -98,8 +104,8 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isPortrait() {
-        return BaseApplication.getInstance().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+    public static boolean isPortrait(Context context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
     /**
@@ -163,8 +169,8 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isScreenLock() {
-        KeyguardManager km = (KeyguardManager) BaseApplication.getInstance().getSystemService(Context.KEYGUARD_SERVICE);
+    public static boolean isScreenLock(Context context) {
+        KeyguardManager km = (KeyguardManager) context.getSystemService(Context.KEYGUARD_SERVICE);
         return km.inKeyguardRestrictedInputMode();
     }
 
@@ -174,8 +180,8 @@ public final class ScreenUtils {
      *
      * @param duration 时长
      */
-    public static void setSleepDuration(final int duration) {
-        Settings.System.putInt(BaseApplication.getInstance().getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, duration);
+    public static void setSleepDuration(Context context,final int duration) {
+        Settings.System.putInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT, duration);
     }
 
     /**
@@ -183,9 +189,9 @@ public final class ScreenUtils {
      *
      * @return 进入休眠时长，报错返回-123
      */
-    public static int getSleepDuration() {
+    public static int getSleepDuration(Context context) {
         try {
-            return Settings.System.getInt(BaseApplication.getInstance().getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
+            return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
         } catch (Settings.SettingNotFoundException e) {
             e.printStackTrace();
             return -123;
@@ -197,8 +203,8 @@ public final class ScreenUtils {
      *
      * @return {@code true}: 是<br>{@code false}: 否
      */
-    public static boolean isTablet() {
-        return (BaseApplication.getInstance().getResources().getConfiguration().screenLayout
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }

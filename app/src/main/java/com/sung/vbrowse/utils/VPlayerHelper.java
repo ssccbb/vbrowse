@@ -6,6 +6,8 @@ import android.graphics.PixelFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.WindowManager;
+
 import com.sung.vbrowse.base.Error;
 import com.sung.vbrowse.interfaces.IPlayerView;
 import com.sung.vbrowse.mvp.model.VideoInfo;
@@ -23,6 +25,7 @@ import io.vov.vitamio.widget.CenterLayout;
  */
 public class VPlayerHelper {
     private static final String TAG = VPlayerHelper.class.getSimpleName();
+    private Context context;
     private IPlayerView playerView;
 
     private VideoInfo videoInfo;
@@ -31,6 +34,7 @@ public class VPlayerHelper {
     private boolean is_video_size_known = false;
     private boolean is_video_ready_to_play = false;
     private int video_width = 0,video_height = 0;
+    private int surfaceWidth = 0,surfaceHeight = 0;
 
     private static class Holder {
         private static VPlayerHelper INSTANCE = new VPlayerHelper();
@@ -66,6 +70,13 @@ public class VPlayerHelper {
             public void surfaceCreated(SurfaceHolder surfaceHolder) {
                 Log.d(TAG, "surface created! " );
                 load(path,holder);
+                if (ScreenUtils.isPortrait(context)){
+                    surfaceWidth = playerView.getPlayerView().getWidth();
+                    surfaceHeight = playerView.getPlayerView().getHeight();
+                }else {
+                    surfaceHeight = playerView.getPlayerView().getWidth();
+                    surfaceWidth = playerView.getPlayerView().getHeight();
+                }
             }
 
             @Override
@@ -89,11 +100,7 @@ public class VPlayerHelper {
             return;
         }
 
-        if (mediaPlayer != null ){
-            playerView.showError(Error.CODE_1003);
-            return;
-        }
-        if (mediaPlayer.isPlaying()) {
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             playerView.showError(Error.CODE_1004);
             return;
         }
@@ -106,7 +113,7 @@ public class VPlayerHelper {
 
         try {
             // Create a new media player and set the listeners
-            mediaPlayer = new MediaPlayer(playerView.getContext());
+            mediaPlayer = new MediaPlayer(context);
             mediaPlayer.setDataSource(path);
             mediaPlayer.setDisplay(holder);
             mediaPlayer.prepareAsync();
@@ -125,8 +132,10 @@ public class VPlayerHelper {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     Log.d(TAG, "play source complet!");
-                    playerView.replay();
-                    replay();
+                    playerView.pause();
+                    pause();
+                    //playerView.replay();
+                    //replay();
                 }
             });
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
@@ -176,12 +185,14 @@ public class VPlayerHelper {
     public void play(){
         mediaPlayer.start();
         playerView.play();
+        playerView.dismissLoading();
     }
 
     /**
      * 暂停
      * */
     public void pause(){
+        playerView.dismissLoading();
         if (mediaPlayer.isPlaying()){
             mediaPlayer.pause();
             playerView.pause();
@@ -201,6 +212,7 @@ public class VPlayerHelper {
         }
         mediaPlayer.seekTo(0);
         playerView.stop();
+        playerView.dismissLoading();
     }
 
     /**
@@ -213,6 +225,7 @@ public class VPlayerHelper {
         mediaPlayer.seekTo(0);
         mediaPlayer.start();
         playerView.replay();
+        playerView.dismissLoading();
     }
 
     /**
@@ -240,24 +253,24 @@ public class VPlayerHelper {
      * 适配
      * */
     public void changeVideoSize() {
-        int videoWidth = mediaPlayer.getVideoWidth();
-        int videoHeight = mediaPlayer.getVideoHeight();
-        DisplayMetrics dm = new DisplayMetrics();
-        playerView.getContext().getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int surfaceWidth = dm.widthPixels;
-        int surfaceHeight = dm.heightPixels;
-        float scaleVideo = (float) videoHeight / (float) videoWidth;
-        float scaleSurface = (float) surfaceHeight / (float) surfaceWidth;
+        if (video_width != 0 && video_height != 0) return;
+        video_width = mediaPlayer.getVideoWidth();
+        video_height = mediaPlayer.getVideoHeight();
 
-        if (scaleVideo > scaleSurface){
-            float f = (float) videoWidth / (float) surfaceWidth;
-            video_height = (int) (surfaceHeight / f);
-            video_width = surfaceWidth;
+        //根据视频尺寸去计算->视频可以在sufaceView中放大的最大倍数。
+        float max;
+        if (ScreenUtils.isPortrait(context)) {
+            //竖屏模式下按视频宽度计算放大倍数值
+            max = Math.max((float) video_width / (float) surfaceWidth,(float) video_height / (float) surfaceHeight);
+        } else{
+            //横屏模式下按视频高度计算放大倍数值
+            max = Math.max(((float) video_width/(float) surfaceHeight),(float) video_height/(float) surfaceWidth);
         }
-        if (scaleVideo <= scaleSurface) {
-            video_width = (int) (surfaceHeight / scaleVideo);
-            video_height = surfaceHeight;
-        }
+
+        //视频宽高分别/最大倍数值 计算出放大后的视频尺寸
+        video_width = (int) Math.ceil((float) video_width / max);
+        video_height = (int) Math.ceil((float) video_height / max);
+
         playerView.getPlayerView().setLayoutParams(new CenterLayout.LayoutParams(video_width, video_height,0,0));
     }
 
@@ -302,6 +315,7 @@ public class VPlayerHelper {
         public VPlayerHelper build(){
             VPlayerHelper helper = getInstance();
             helper.videoInfo = this.videoInfo;
+            helper.context = this.context;
             return helper;
         }
     }

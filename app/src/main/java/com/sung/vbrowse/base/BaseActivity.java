@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+
+import com.sung.vbrowse.BaseApplication;
+
 import butterknife.ButterKnife;
 
 /**
@@ -39,8 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected Context getContext() {
-        Context context = BaseApplication.getInstance().getApplicationContext();
-        return context != null ? context : this;
+        return this;
     }
 
     protected SharedPreferences getPreferences() {

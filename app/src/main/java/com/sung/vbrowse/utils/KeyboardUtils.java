@@ -11,7 +11,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 
-import com.sung.vbrowse.base.BaseApplication;
+import com.sung.vbrowse.BaseApplication;
 
 import java.lang.reflect.Method;
 

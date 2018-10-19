@@ -1,4 +1,4 @@
-package com.sung.vbrowse.base;
+package com.sung.vbrowse;
 
 import android.app.Application;
 import android.content.Context;
@@ -18,19 +18,19 @@ import java.io.File;
  * @Description: application
  */
 public class BaseApplication extends Application {
+    private static BaseApplication instance;
     private SharedPreferences mPreferences;
     private final String PHOTO_FRESCO = "/cache/fresco";
     private final int CACHE_SIZE = 30;
 
-    private static class Holder {
-        private static final BaseApplication INSTANCE = new BaseApplication();
-    }
-
     public static BaseApplication getInstance(){
-        return Holder.INSTANCE;
+        if (instance == null){
+            instance = new BaseApplication();
+        }
+        return instance;
     }
 
-    private BaseApplication() {
+    public BaseApplication() {
     }
 
     @Override
