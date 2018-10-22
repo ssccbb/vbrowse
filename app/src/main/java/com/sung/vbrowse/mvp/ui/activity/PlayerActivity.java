@@ -21,6 +21,7 @@ import com.sung.vbrowse.mvp.model.VideoInfo;
 import com.sung.vbrowse.mvp.presenter.PlayerPresenter;
 import com.sung.vbrowse.utils.ScreenUtils;
 import com.sung.vbrowse.utils.VPlayerHelper;
+import com.sung.vbrowse.utils.VPlayerUtils;
 import com.sung.vbrowse.view.mediacontroller.MediaControllerView;
 
 import butterknife.BindView;
@@ -160,5 +161,11 @@ public class PlayerActivity extends BaseActivity implements IPlayerView,MediaCon
     @Override
     public void onDisplayChange(boolean isLanscape) {
 
+    }
+
+    @Override
+    public void onLightChange(float light) {
+        //改变亮度只能拿activity不能用context所以为了view不冗余不在mediacontrollerview中更改
+        VPlayerUtils.setScreenBrightness(this,(int) light);
     }
 }

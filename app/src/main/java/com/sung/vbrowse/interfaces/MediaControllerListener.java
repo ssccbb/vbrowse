@@ -12,4 +12,6 @@ public interface MediaControllerListener {
     void onPlayStatusChange(boolean pause);
 
     void onDisplayChange(boolean isLanscape);
+
+    void onLightChange(float light);
 }

@@ -7,4 +7,5 @@ package com.sung.vbrowse.interfaces;
  */
 public interface TapTouchEvent {
     void onTouchEnd(boolean isClick);
+    void onTouchMoving(boolean isLeft,boolean slideUp,float percent);
 }

@@ -1,8 +1,13 @@
 package com.sung.vbrowse.utils;
 
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.WindowManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -114,5 +119,37 @@ public class VPlayerUtils {
             e.printStackTrace();
         }
         return strCoverFilePath;
+    }
+
+    public static int getScreenBrightness(Context activity) {
+        int value = 0;
+        ContentResolver cr = activity.getContentResolver();
+        try {
+            value = Settings.System.getInt(cr, Settings.System.SCREEN_BRIGHTNESS);
+        } catch (Settings.SettingNotFoundException e) {
+        }
+        return value;
+    }
+
+    public static void setScreenBrightness(Activity activity, int value) {
+        WindowManager.LayoutParams params = activity.getWindow().getAttributes();
+        params.screenBrightness = value / 255f;
+        activity.getWindow().setAttributes(params);
+    }
+
+    public static int getMediaMaxVolume(Context context){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.getStreamMaxVolume( AudioManager.STREAM_MUSIC );
+    }
+
+    public static int getCurrentMediaVolume(Context context){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        return audioManager.getStreamVolume( AudioManager.STREAM_MUSIC );
+    }
+
+    public static void setMediaVolume(Context context, int volume){
+        AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, //音量类型
+                volume, AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
     }
 }

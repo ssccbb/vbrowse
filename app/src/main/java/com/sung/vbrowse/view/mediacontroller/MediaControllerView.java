@@ -1,11 +1,13 @@
 package com.sung.vbrowse.view.mediacontroller;
 
 import android.content.Context;
+import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import com.sung.vbrowse.R;
 import com.sung.vbrowse.interfaces.MediaControllerListener;
 import com.sung.vbrowse.interfaces.TapTouchEvent;
+import com.sung.vbrowse.utils.VPlayerUtils;
 
 /**
  * Create by sung at 2018/10/22
@@ -32,6 +35,11 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     private boolean IS_PLAY = false;
     private boolean IS_LOCK = false;
+
+    private float currentVolume = 0f;
+    private float currentLight = 0f;
+    private float maxVolume = 0f;
+    private float maxLight = 255f;
 
     private Handler mHandler = new Handler(){
         @Override
@@ -58,6 +66,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     private void init(){
         inflateLayout();
         addListener();
+        getInfo();
     }
 
     private void inflateLayout(){
@@ -90,6 +99,13 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         display.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(this);
         tapView.addTapTouchEvent(this);
+    }
+
+    private void getInfo(){
+        Context context = this.getContext();
+        maxVolume = VPlayerUtils.getMediaMaxVolume(context);
+        currentVolume = VPlayerUtils.getCurrentMediaVolume(context);
+        currentLight = VPlayerUtils.getScreenBrightness(context);
     }
 
     public void addOnMediaContrillerListener(MediaControllerListener mediaControllerListener){
@@ -177,5 +193,70 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    @Override
+    public void onTouchEnd(boolean isClick) {
+        Log.e(MediaControllerView.class.getSimpleName(), isClick ? "click" : "move" );
+    }
+
+    @Override
+    public void onTouchMoving(boolean isLeft, boolean isSlideUp, float percent) {
+        if (isLeft && isSlideUp){
+            Log.e(MediaControllerView.class.getSimpleName(), "亮度增加 "+percent );
+            increaseLight(percent);
+        }
+        if (isLeft && !isSlideUp){
+            Log.e(MediaControllerView.class.getSimpleName(), "亮度减少 "+percent );
+            decreaseLight(percent);
+        }
+        if (!isLeft && isSlideUp){
+            Log.e(MediaControllerView.class.getSimpleName(), "音量增加 "+percent );
+        }
+        if (!isLeft && !isSlideUp){
+            Log.e(MediaControllerView.class.getSimpleName(), "音量减少 "+percent );
+        }
+    }
+
+    private void increaseLight(float percent){
+        if (percent <= 0 || maxLight <= 0 || currentLight >= maxLight){
+            return;
+        }
+
+        int increaseValue = (int) (percent * maxLight);
+        currentLight = increaseValue + currentLight;
+        if (currentLight >= maxLight){
+            currentLight = maxLight;
+        }
+        if (mediaControllerListener != null){
+            mediaControllerListener.onLightChange(currentLight);
+        }
+    }
+
+    private void decreaseLight(float percent){
+        if (percent <= 0 || maxLight <= 0 || currentLight <= 0){
+            return;
+        }
+
+        int decreaseLight = (int) (percent * maxLight);
+        currentLight = currentLight - decreaseLight;
+        if (currentLight <= 5){
+            currentLight = 5;
+        }
+        if (mediaControllerListener != null){
+            mediaControllerListener.onLightChange(currentLight);
+        }
+    }
+
+    private void increaseVolume(float percent){
+        if (percent <= 0 || maxVolume <= 0 || currentVolume >= maxVolume){
+            return;
+        }
+    }
+
+    private void decreaseVolume(float percent){
+        if (percent <= 0 || maxVolume <= 0 || currentVolume <= 0){
+            return;
+        }
     }
 }
