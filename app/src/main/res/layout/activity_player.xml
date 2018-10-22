@@ -18,6 +18,11 @@
         </SurfaceView>
     </io.vov.vitamio.widget.CenterLayout>
 
+    <com.sung.vbrowse.view.mediacontroller.MediaControllerView
+        android:id="@+id/mcv_controller"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
     <android.support.v4.widget.ContentLoadingProgressBar
         android:id="@+id/progress"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -16,16 +16,17 @@ import android.widget.Toast;
 import com.sung.vbrowse.R;
 import com.sung.vbrowse.base.BaseActivity;
 import com.sung.vbrowse.interfaces.IPlayerView;
+import com.sung.vbrowse.interfaces.MediaControllerListener;
 import com.sung.vbrowse.mvp.model.VideoInfo;
 import com.sung.vbrowse.mvp.presenter.PlayerPresenter;
-import com.sung.vbrowse.utils.KeyboardUtils;
 import com.sung.vbrowse.utils.ScreenUtils;
 import com.sung.vbrowse.utils.VPlayerHelper;
+import com.sung.vbrowse.view.mediacontroller.MediaControllerView;
 
 import butterknife.BindView;
 import io.vov.vitamio.Vitamio;
 
-public class PlayerActivity extends BaseActivity implements IPlayerView {
+public class PlayerActivity extends BaseActivity implements IPlayerView,MediaControllerListener {
     private VPlayerHelper mHelper;
     private PlayerPresenter mPresenter;
 
@@ -35,6 +36,8 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
     SurfaceView mPreview;
     @BindView(R.id.progress)
     ContentLoadingProgressBar mProgress;
+    @BindView(R.id.mcv_controller)
+    MediaControllerView mControllerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +62,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
         mProgress.getIndeterminateDrawable().setColorFilter(
                 ContextCompat.getColor(getContext(), R.color.ThemeColor),
                 PorterDuff.Mode.MULTIPLY);
+        mControllerView.addOnMediaContrillerListener(this);
     }
 
     @Override
@@ -78,26 +82,27 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
 
     @Override
     public void play() {
-        Toast.makeText(this, "play", Toast.LENGTH_SHORT).show();
+        mControllerView.play();
     }
 
     @Override
     public void pause() {
-        Toast.makeText(this, "pause", Toast.LENGTH_SHORT).show();
+        mControllerView.pause();
     }
 
     @Override
     public void stop() {
-        Toast.makeText(this, "stop", Toast.LENGTH_SHORT).show();
+        mControllerView.stop();
     }
 
     @Override
     public void replay() {
-        Toast.makeText(this, "replay", Toast.LENGTH_SHORT).show();
+        mControllerView.replay();
     }
 
     @Override
     public void updateProgress(int progress) {
+        mControllerView.updateProgress(progress);
     }
 
     @Override
@@ -137,5 +142,23 @@ public class PlayerActivity extends BaseActivity implements IPlayerView {
         Intent goTo = new Intent(context, PlayerActivity.class);
         goTo.putExtra(PlayerActivity.class.getSimpleName(), video);
         context.startActivity(goTo);
+    }
+
+    /********       controller callback        ********/
+
+    @Override
+    public void onBackUp() {
+        mHelper.stop();
+        this.finish();
+    }
+
+    @Override
+    public void onPlayStatusChange(boolean pause) {
+        mHelper.pause();
+    }
+
+    @Override
+    public void onDisplayChange(boolean isLanscape) {
+
     }
 }

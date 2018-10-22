@@ -3,15 +3,11 @@ package com.sung.vbrowse.utils;
 
 import android.content.Context;
 import android.graphics.PixelFormat;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
-import android.view.WindowManager;
-
 import com.sung.vbrowse.base.Error;
 import com.sung.vbrowse.interfaces.IPlayerView;
 import com.sung.vbrowse.mvp.model.VideoInfo;
-
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.widget.CenterLayout;
 

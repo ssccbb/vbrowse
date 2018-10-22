@@ -3,7 +3,9 @@
     <!--  -->
     <dimen name="dp_2">2dp</dimen>
     <dimen name="dp_5">5dp</dimen>
+    <dimen name="dp_7">7dp</dimen>
     <dimen name="dp_10">10dp</dimen>
+    <dimen name="dp_12">12dp</dimen>
     <dimen name="dp_15">15dp</dimen>
     <dimen name="dp_20">20dp</dimen>
     <dimen name="dp_30">30dp</dimen>
@@ -19,4 +21,6 @@
     <!--indicator-->
     <dimen name="view_tab_indicator_width">22dp</dimen>
     <dimen name="view_tab_indicator_text_size">10sp</dimen>
+    <!--media controller-->
+    <dimen name="controller_tools_normal_height">45dp</dimen>
 </resources>
