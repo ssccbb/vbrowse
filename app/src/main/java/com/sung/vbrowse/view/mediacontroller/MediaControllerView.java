@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -33,6 +34,8 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     private TapView tapView;
     private TextView tittle, time;
     private SeekBar seekBar;
+    private View dialog_light,dialog_volume;
+    private ProgressBar light_progress,volume_progress;
 
     private boolean IS_PLAY = false;
     private boolean IS_LOCK = false;
@@ -105,6 +108,11 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         time = child.findViewById(R.id.tv_time);
         seekBar = child.findViewById(R.id.sb_seek);
         tapView = child.findViewById(R.id.v_tap);
+
+        dialog_light = child.findViewById(R.id.light_dialog);
+        dialog_volume = child.findViewById(R.id.volume_dialog);
+        light_progress = child.findViewById(R.id.light_progress);
+        volume_progress = child.findViewById(R.id.volume_progress);
         this.addView(child,
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
@@ -210,6 +218,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     @Override
     public void onTouchEnd(boolean isClick) {
+        hideDialog();
         if (!isClick) return;
         show();
     }
@@ -244,6 +253,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         }
         if (mediaControllerListener != null) {
             mediaControllerListener.onLightChange(currentLight);
+            lightDialogController();
         }
     }
 
@@ -259,19 +269,42 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         }
         if (mediaControllerListener != null) {
             mediaControllerListener.onLightChange(currentLight);
+            lightDialogController();
         }
+    }
+
+    private void lightDialogController(){
+        if (dialog_light.getVisibility() == GONE){
+            dialog_light.setVisibility(VISIBLE);
+        }
+        if(light_progress.getMax()!= maxLight){
+            light_progress.setMax((int) maxLight);
+        }
+        light_progress.setProgress((int) currentLight);
     }
 
     private void increaseVolume(float percent) {
         if (percent <= 0 || maxVolume <= 0 || currentVolume >= maxVolume) {
             return;
         }
+        volumeDialogController();
     }
 
     private void decreaseVolume(float percent) {
         if (percent <= 0 || maxVolume <= 0 || currentVolume <= 0) {
             return;
         }
+        volumeDialogController();
+    }
+
+    private void volumeDialogController(){
+        if (dialog_volume.getVisibility() == GONE){
+            dialog_volume.setVisibility(VISIBLE);
+        }
+        if(volume_progress.getMax()!= maxVolume){
+            volume_progress.setMax((int) maxVolume);
+        }
+        volume_progress.setProgress((int) currentVolume);
     }
     /******    亮度/音量     ******/
 
@@ -287,6 +320,9 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         }
     }
 
+    /**
+     * 显示全部
+     * */
     private void showAll() {
         top.setVisibility(VISIBLE);
         bottom.setVisibility(VISIBLE);
@@ -295,6 +331,9 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         maskBottom.setVisibility(VISIBLE);
     }
 
+    /**
+     * 只显示锁
+     * */
     private void showLock() {
         top.setVisibility(GONE);
         bottom.setVisibility(GONE);
@@ -303,12 +342,27 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         lock.setVisibility(VISIBLE);
     }
 
+    /**
+     * 隐藏所有工具（上部、下部、遮罩、锁）
+     * */
     private void hideAll() {
         top.setVisibility(GONE);
         bottom.setVisibility(GONE);
         maskTop.setVisibility(GONE);
         maskBottom.setVisibility(GONE);
         lock.setVisibility(GONE);
+    }
+
+    /**
+     * 隐藏所有控制提示（音量、亮度、快进、快退）
+     * */
+    private void hideDialog(){
+        if (dialog_volume.getVisibility() != GONE){
+            dialog_volume.setVisibility(GONE);
+        }
+        if (dialog_light.getVisibility() != GONE){
+            dialog_light.setVisibility(GONE);
+        }
     }
     /******    界面显隐     ******/
 }
