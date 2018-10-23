@@ -24,13 +24,14 @@ import com.sung.vbrowse.utils.VPlayerUtils;
  *
  * @Description: 控制界面
  */
-public class MediaControllerView extends FrameLayout implements View.OnClickListener,SeekBar.OnSeekBarChangeListener,TapTouchEvent {
+public class MediaControllerView extends FrameLayout implements View.OnClickListener, SeekBar.OnSeekBarChangeListener, TapTouchEvent {
     private MediaControllerListener mediaControllerListener;
 
-    private View back,info,setting,report,share;
-    private View play,lock,display;
+    private View back, info, setting, report, share;
+    private View play, lock, display;
+    private View top, bottom,maskTop,maskBottom;
     private TapView tapView;
-    private TextView tittle,time;
+    private TextView tittle, time;
     private SeekBar seekBar;
 
     private boolean IS_PLAY = false;
@@ -41,10 +42,26 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     private float maxVolume = 0f;
     private float maxLight = 255f;
 
-    private Handler mHandler = new Handler(){
+    private final int MSG_UI_DISPLAY = 11;
+    private final int MSG_UI_HIDE = 12;
+    private final int MSG_UI_DELAY = 3000;
+
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            switch (msg.what) {
+                case MSG_UI_DISPLAY:
+                    if (IS_LOCK) {
+                        showLock();
+                    } else {
+                        showAll();
+                    }
+                    break;
+                case MSG_UI_HIDE:
+                    hideAll();
+                    break;
+            }
         }
     };
 
@@ -63,15 +80,19 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         init();
     }
 
-    private void init(){
+    private void init() {
         inflateLayout();
         addListener();
         getInfo();
     }
 
-    private void inflateLayout(){
+    private void inflateLayout() {
         View child = LayoutInflater.from(this.getContext())
-                .inflate(R.layout.view_media_controller,this,false);
+                .inflate(R.layout.view_media_controller, this, false);
+        top = child.findViewById(R.id.ll_top_tool);
+        bottom = child.findViewById(R.id.ll_bottom_tool);
+        maskTop = child.findViewById(R.id.mask_top);
+        maskBottom = child.findViewById(R.id.mask_bottom);
         back = child.findViewById(R.id.iv_back);
         info = child.findViewById(R.id.iv_info);
         setting = child.findViewById(R.id.iv_setting);
@@ -85,10 +106,10 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         seekBar = child.findViewById(R.id.sb_seek);
         tapView = child.findViewById(R.id.v_tap);
         this.addView(child,
-                new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
-    private void addListener(){
+    private void addListener() {
         back.setOnClickListener(this);
         info.setOnClickListener(this);
         setting.setOnClickListener(this);
@@ -101,23 +122,15 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         tapView.addTapTouchEvent(this);
     }
 
-    private void getInfo(){
+    private void getInfo() {
         Context context = this.getContext();
         maxVolume = VPlayerUtils.getMediaMaxVolume(context);
         currentVolume = VPlayerUtils.getCurrentMediaVolume(context);
         currentLight = VPlayerUtils.getScreenBrightness(context);
     }
 
-    public void addOnMediaContrillerListener(MediaControllerListener mediaControllerListener){
+    public void addOnMediaContrillerListener(MediaControllerListener mediaControllerListener) {
         this.mediaControllerListener = mediaControllerListener;
-    }
-
-    private void switchLockStatus(){
-        if (IS_LOCK){
-            //锁一直显示 其他的一律隐藏
-        }else {
-            //正常显示隐藏
-        }
     }
 
     public void play() {
@@ -143,39 +156,39 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     @Override
     public void onClick(View view) {
-        if (view == back){
+        if (view == back) {
             //返回
-            if (mediaControllerListener != null){
+            if (mediaControllerListener != null) {
                 mediaControllerListener.onBackUp();
             }
         }
-        if (view == info){
+        if (view == info) {
             //详情
         }
-        if (view == setting){
+        if (view == setting) {
             //设置
         }
-        if (view == report){
+        if (view == report) {
             //举报
         }
-        if (view == share){
+        if (view == share) {
             //分享
         }
-        if (view == play){
+        if (view == play) {
             //播放
             IS_PLAY = !IS_PLAY;
             play.setSelected(!IS_PLAY);
-            if (mediaControllerListener != null){
+            if (mediaControllerListener != null) {
                 mediaControllerListener.onPlayStatusChange(!IS_PLAY);
             }
         }
-        if (view == lock){
+        if (view == lock) {
             //锁定
             IS_LOCK = !IS_LOCK;
             lock.setSelected(IS_LOCK);
-            switchLockStatus();
+            show();
         }
-        if (view == display){
+        if (view == display) {
             //切换横竖屏
         }
     }
@@ -197,66 +210,105 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     @Override
     public void onTouchEnd(boolean isClick) {
-        Log.e(MediaControllerView.class.getSimpleName(), isClick ? "click" : "move" );
+        if (!isClick) return;
+        show();
     }
 
     @Override
     public void onTouchMoving(boolean isLeft, boolean isSlideUp, float percent) {
-        if (isLeft && isSlideUp){
-            Log.e(MediaControllerView.class.getSimpleName(), "亮度增加 "+percent );
+        if (IS_LOCK) return;
+        if (isLeft && isSlideUp) {
             increaseLight(percent);
         }
-        if (isLeft && !isSlideUp){
-            Log.e(MediaControllerView.class.getSimpleName(), "亮度减少 "+percent );
+        if (isLeft && !isSlideUp) {
             decreaseLight(percent);
         }
-        if (!isLeft && isSlideUp){
-            Log.e(MediaControllerView.class.getSimpleName(), "音量增加 "+percent );
+        if (!isLeft && isSlideUp) {
+            increaseVolume(percent);
         }
-        if (!isLeft && !isSlideUp){
-            Log.e(MediaControllerView.class.getSimpleName(), "音量减少 "+percent );
+        if (!isLeft && !isSlideUp) {
+            decreaseVolume(percent);
         }
     }
 
-    private void increaseLight(float percent){
-        if (percent <= 0 || maxLight <= 0 || currentLight >= maxLight){
+    /******    亮度/音量     ******/
+    private void increaseLight(float percent) {
+        if (percent <= 0 || maxLight <= 0 || currentLight >= maxLight) {
             return;
         }
 
         int increaseValue = (int) (percent * maxLight);
         currentLight = increaseValue + currentLight;
-        if (currentLight >= maxLight){
+        if (currentLight >= maxLight) {
             currentLight = maxLight;
         }
-        if (mediaControllerListener != null){
+        if (mediaControllerListener != null) {
             mediaControllerListener.onLightChange(currentLight);
         }
     }
 
-    private void decreaseLight(float percent){
-        if (percent <= 0 || maxLight <= 0 || currentLight <= 0){
+    private void decreaseLight(float percent) {
+        if (percent <= 0 || maxLight <= 0 || currentLight <= 0) {
             return;
         }
 
         int decreaseLight = (int) (percent * maxLight);
         currentLight = currentLight - decreaseLight;
-        if (currentLight <= 5){
+        if (currentLight <= 5) {
             currentLight = 5;
         }
-        if (mediaControllerListener != null){
+        if (mediaControllerListener != null) {
             mediaControllerListener.onLightChange(currentLight);
         }
     }
 
-    private void increaseVolume(float percent){
-        if (percent <= 0 || maxVolume <= 0 || currentVolume >= maxVolume){
+    private void increaseVolume(float percent) {
+        if (percent <= 0 || maxVolume <= 0 || currentVolume >= maxVolume) {
             return;
         }
     }
 
-    private void decreaseVolume(float percent){
-        if (percent <= 0 || maxVolume <= 0 || currentVolume <= 0){
+    private void decreaseVolume(float percent) {
+        if (percent <= 0 || maxVolume <= 0 || currentVolume <= 0) {
             return;
         }
     }
+    /******    亮度/音量     ******/
+
+    /******    界面显隐     ******/
+    private void show(){
+        //根据锁状态
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler.sendEmptyMessageDelayed(MSG_UI_HIDE, MSG_UI_DELAY);
+        if (IS_LOCK) {
+            showLock();
+        } else {
+            showAll();
+        }
+    }
+
+    private void showAll() {
+        top.setVisibility(VISIBLE);
+        bottom.setVisibility(VISIBLE);
+        lock.setVisibility(VISIBLE);
+        maskTop.setVisibility(VISIBLE);
+        maskBottom.setVisibility(VISIBLE);
+    }
+
+    private void showLock() {
+        top.setVisibility(GONE);
+        bottom.setVisibility(GONE);
+        maskTop.setVisibility(GONE);
+        maskBottom.setVisibility(GONE);
+        lock.setVisibility(VISIBLE);
+    }
+
+    private void hideAll() {
+        top.setVisibility(GONE);
+        bottom.setVisibility(GONE);
+        maskTop.setVisibility(GONE);
+        maskBottom.setVisibility(GONE);
+        lock.setVisibility(GONE);
+    }
+    /******    界面显隐     ******/
 }

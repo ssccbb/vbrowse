@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.DisplayMetrics;
@@ -57,7 +59,7 @@ public final class ScreenUtils {
         activity.requestWindowFeature(Window.FEATURE_NO_TITLE);
         activity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        hideNavigation(activity);
+        //hideNavigation(activity);
     }
 
     /**
@@ -65,6 +67,12 @@ public final class ScreenUtils {
      * */
     public static void hideNavigation(Activity activity){
         activity.getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    }
+
+    public static void setDarkNavigation(Activity activity){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.getWindow().setNavigationBarColor(Color.BLACK);
+        }
     }
 
     /**

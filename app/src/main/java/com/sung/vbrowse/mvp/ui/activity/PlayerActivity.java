@@ -46,6 +46,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView,MediaCon
         ScreenUtils.setFullScreen(this);
         setContentView(R.layout.activity_player);
         Vitamio.isInitialized(this);
+        ScreenUtils.setDarkNavigation(this);
 
         mVideoInfo = (VideoInfo) this.getIntent()
                 .getSerializableExtra(PlayerActivity.class.getSimpleName());

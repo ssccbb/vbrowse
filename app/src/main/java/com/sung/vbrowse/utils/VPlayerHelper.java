@@ -117,7 +117,7 @@ public class VPlayerHelper {
                 @Override
                 public void onBufferingUpdate(MediaPlayer mp, int percent) {
                     //网络视频缓冲
-                    if (percent >= 100) {
+                    if (videoInfo.type == PlayerMode.LOCAL || percent >= 100) {
                         playerView.dismissLoading();
                     }else {
                         playerView.showLoading();
@@ -130,16 +130,12 @@ public class VPlayerHelper {
                     Log.d(TAG, "play source complet!");
                     playerView.pause();
                     pause();
-                    //playerView.replay();
-                    //replay();
                 }
             });
             mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     Log.d(TAG, "play source prepare done!");
-                    playerView.dismissLoading();
-                    playerView.play();
                     is_video_ready_to_play = true;
                     if (is_video_size_known && is_video_ready_to_play){
                         play();
@@ -165,11 +161,13 @@ public class VPlayerHelper {
                 @Override
                 public boolean onError(MediaPlayer mp, int what, int extra) {
                     Log.e(TAG, "play source error --> what="+what+" & extra="+extra+"!");
+                    playerView.dismissLoading();
                     playerView.showError(Error.CODE_1002);
                     return true;
                 }
             });
         } catch (Exception e) {
+            playerView.dismissLoading();
             playerView.showError(Error.CODE_1005);
             Log.e(TAG, "error: " + e.getMessage(), e);
         }

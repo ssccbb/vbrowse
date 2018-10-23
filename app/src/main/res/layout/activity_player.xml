@@ -25,6 +25,7 @@
 
     <android.support.v4.widget.ContentLoadingProgressBar
         android:id="@+id/progress"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
