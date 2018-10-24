@@ -6,6 +6,7 @@ package com.sung.vbrowse.interfaces;
  * @Description:
  */
 public interface TapTouchEvent {
-    void onTouchEnd(boolean isClick);
-    void onTouchMoving(boolean isLeft,boolean slideUp,float percent);
+    void onTouchEnd(boolean isClick,boolean isDoubleClick);
+    void onVerticalSlide(boolean isLeft,boolean slideUp,float percent);
+    void onHorizontalSlide(boolean right2left,float percent);
 }

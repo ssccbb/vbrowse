@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.sung.vbrowse.R;
 import com.sung.vbrowse.interfaces.MediaControllerListener;
 import com.sung.vbrowse.interfaces.TapTouchEvent;
+import com.sung.vbrowse.mvp.model.VideoInfo;
 import com.sung.vbrowse.utils.VPlayerUtils;
 
 /**
@@ -30,12 +31,14 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     private View back, info, setting, report, share;
     private View play, lock, display;
-    private View top, bottom,maskTop,maskBottom;
+    private View top, bottom, maskTop, maskBottom;
     private TapView tapView;
     private TextView tittle, time;
     private SeekBar seekBar;
-    private View dialog_light,dialog_volume;
-    private ProgressBar light_progress,volume_progress;
+    private View dialog_light, dialog_volume;
+    private ProgressBar light_progress, volume_progress;
+
+    private VideoInfo video;
 
     private boolean IS_PLAY = false;
     private boolean IS_LOCK = false;
@@ -47,6 +50,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     private final int MSG_UI_DISPLAY = 11;
     private final int MSG_UI_HIDE = 12;
+    private final int MSG_DIALOG_HIDE = 13;
     private final int MSG_UI_DELAY = 3000;
 
     private Handler mHandler = new Handler() {
@@ -63,6 +67,9 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
                     break;
                 case MSG_UI_HIDE:
                     hideAll();
+                    break;
+                case MSG_DIALOG_HIDE:
+                    hideDialog();
                     break;
             }
         }
@@ -87,6 +94,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         inflateLayout();
         addListener();
         getInfo();
+        setUI();
     }
 
     private void inflateLayout() {
@@ -117,6 +125,11 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
     }
 
+    private void setUI(){
+        if (video == null) return;
+        tittle.setText(video.title);
+    }
+
     private void addListener() {
         back.setOnClickListener(this);
         info.setOnClickListener(this);
@@ -135,6 +148,10 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         maxVolume = VPlayerUtils.getMediaMaxVolume(context);
         currentVolume = VPlayerUtils.getCurrentMediaVolume(context);
         currentLight = VPlayerUtils.getScreenBrightness(context);
+    }
+
+    public void addVideoInfo(VideoInfo video){
+        this.video = video;
     }
 
     public void addOnMediaContrillerListener(MediaControllerListener mediaControllerListener) {
@@ -217,14 +234,14 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     }
 
     @Override
-    public void onTouchEnd(boolean isClick) {
+    public void onTouchEnd(boolean isClick, boolean isDoubleClick) {
         hideDialog();
         if (!isClick) return;
         show();
     }
 
     @Override
-    public void onTouchMoving(boolean isLeft, boolean isSlideUp, float percent) {
+    public void onVerticalSlide(boolean isLeft, boolean isSlideUp, float percent) {
         if (IS_LOCK) return;
         if (isLeft && isSlideUp) {
             increaseLight(percent);
@@ -237,6 +254,14 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         }
         if (!isLeft && !isSlideUp) {
             decreaseVolume(percent);
+        }
+    }
+
+    @Override
+    public void onHorizontalSlide(boolean right2left, float percent) {
+        if (IS_LOCK) return;
+        if (right2left) {
+
         }
     }
 
@@ -273,11 +298,11 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         }
     }
 
-    private void lightDialogController(){
-        if (dialog_light.getVisibility() == GONE){
+    private void lightDialogController() {
+        if (dialog_light.getVisibility() == GONE) {
             dialog_light.setVisibility(VISIBLE);
         }
-        if(light_progress.getMax()!= maxLight){
+        if (light_progress.getMax() != maxLight) {
             light_progress.setMax((int) maxLight);
         }
         light_progress.setProgress((int) currentLight);
@@ -287,21 +312,32 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
         if (percent <= 0 || maxVolume <= 0 || currentVolume >= maxVolume) {
             return;
         }
-        volumeDialogController();
+
+        int increaseVolume = (int) (percent * maxVolume);
+        currentVolume = currentVolume + increaseVolume;
+        if (currentVolume >= maxVolume) {
+            currentVolume = maxVolume;
+        }
+        VPlayerUtils.setMediaVolume(this.getContext(), (int) currentVolume);
     }
 
     private void decreaseVolume(float percent) {
         if (percent <= 0 || maxVolume <= 0 || currentVolume <= 0) {
             return;
         }
-        volumeDialogController();
+        int decreaseVolume = (int) (percent * maxVolume);
+        currentVolume = currentVolume - decreaseVolume;
+        if (currentVolume <= 0) {
+            currentVolume = 0;
+        }
+        VPlayerUtils.setMediaVolume(this.getContext(), (int) currentVolume);
     }
 
-    private void volumeDialogController(){
-        if (dialog_volume.getVisibility() == GONE){
+    private void volumeDialogController() {
+        if (dialog_volume.getVisibility() == GONE) {
             dialog_volume.setVisibility(VISIBLE);
         }
-        if(volume_progress.getMax()!= maxVolume){
+        if (volume_progress.getMax() != maxVolume) {
             volume_progress.setMax((int) maxVolume);
         }
         volume_progress.setProgress((int) currentVolume);
@@ -309,7 +345,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
     /******    亮度/音量     ******/
 
     /******    界面显隐     ******/
-    private void show(){
+    private void show() {
         //根据锁状态
         mHandler.removeCallbacksAndMessages(null);
         mHandler.sendEmptyMessageDelayed(MSG_UI_HIDE, MSG_UI_DELAY);
@@ -322,7 +358,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     /**
      * 显示全部
-     * */
+     */
     private void showAll() {
         top.setVisibility(VISIBLE);
         bottom.setVisibility(VISIBLE);
@@ -333,7 +369,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     /**
      * 只显示锁
-     * */
+     */
     private void showLock() {
         top.setVisibility(GONE);
         bottom.setVisibility(GONE);
@@ -344,7 +380,7 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     /**
      * 隐藏所有工具（上部、下部、遮罩、锁）
-     * */
+     */
     private void hideAll() {
         top.setVisibility(GONE);
         bottom.setVisibility(GONE);
@@ -355,14 +391,22 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     /**
      * 隐藏所有控制提示（音量、亮度、快进、快退）
-     * */
-    private void hideDialog(){
-        if (dialog_volume.getVisibility() != GONE){
+     */
+    private void hideDialog() {
+        if (dialog_volume.getVisibility() != GONE) {
             dialog_volume.setVisibility(GONE);
         }
-        if (dialog_light.getVisibility() != GONE){
+        if (dialog_light.getVisibility() != GONE) {
             dialog_light.setVisibility(GONE);
         }
+    }
+
+    public void showVolumeDialog(){
+        currentVolume = VPlayerUtils.getCurrentMediaVolume(this.getContext());
+        Log.e(MediaControllerView.class.getSimpleName(), "showVolumeDialog: "+currentVolume );
+        volumeDialogController();
+        mHandler.removeCallbacksAndMessages(null);
+        mHandler.sendEmptyMessageDelayed(MSG_DIALOG_HIDE,MSG_UI_DELAY);
     }
     /******    界面显隐     ******/
 }

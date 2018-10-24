@@ -6,11 +6,23 @@
     android:padding="@dimen/dp_5"
     android:background="?selectableItemBackground"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_cover"
+        android:src="@drawable/ic_launcher"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
+        android:scaleType="centerCrop"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
     <TextView
         android:id="@+id/tv_tittle"
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题"
         android:textColor="@android:color/black"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="@dimen/dp_50"
+        app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_path"
@@ -21,7 +33,8 @@
         android:id="@+id/tv_path"
         tools:text="标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题"
         android:textColor="@android:color/darker_gray"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="@dimen/dp_50"
+        app:layout_constraintLeft_toRightOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_tittle"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
+import android.media.MediaMetadataRetriever;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.WindowManager;
@@ -12,8 +13,6 @@ import android.view.WindowManager;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Locale;
-
-import io.vov.vitamio.MediaMetadataRetriever;
 
 /**
  * Create by sung at 2018/10/22
@@ -90,7 +89,7 @@ public class VPlayerUtils {
         return String.format(Locale.getDefault(), "%.2f", result);
     }
 
-    public static String getVideoThumb(Context context, String videoPath, long coverTime) {
+    public static String getVideoThumb(String videoPath, long coverTime) {
         String strCoverFilePath = null;
         try {
             File videoFile = new File(videoPath);
@@ -98,7 +97,7 @@ public class VPlayerUtils {
                 Log.w("Utils", "record: video file is not exists when record finish");
                 return null;
             }
-            MediaMetadataRetriever media = new MediaMetadataRetriever(context);
+            MediaMetadataRetriever media = new MediaMetadataRetriever();
             media.setDataSource(videoPath);
             Bitmap thumb = media.getFrameAtTime(coverTime);
 
@@ -149,7 +148,6 @@ public class VPlayerUtils {
 
     public static void setMediaVolume(Context context, int volume){
         AudioManager audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, //音量类型
-                volume, AudioManager.FLAG_PLAY_SOUND | AudioManager.FLAG_SHOW_UI);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
     }
 }

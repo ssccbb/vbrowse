@@ -2,18 +2,26 @@ package com.sung.vbrowse.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.sung.vbrowse.R;
 import com.sung.vbrowse.mvp.model.VideoInfo;
 import com.sung.vbrowse.mvp.ui.activity.PlayerActivity;
+import com.sung.vbrowse.utils.FileUtils;
+import com.sung.vbrowse.utils.StringUtils;
+import com.sung.vbrowse.utils.VPlayerUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,12 +72,14 @@ public class FileListAdapter extends RecyclerView.Adapter {
         private View root;
         private TextView mTittle;
         private TextView mPath;
+        private SimpleDraweeView mCover;
 
         public FileListHolder(@NonNull View itemView) {
             super(itemView);
             root = itemView;
             mTittle = itemView.findViewById(R.id.tv_tittle);
             mPath = itemView.findViewById(R.id.tv_path);
+            mCover = itemView.findViewById(R.id.iv_cover);
         }
 
         void onBind(int position) {
@@ -79,10 +89,18 @@ public class FileListAdapter extends RecyclerView.Adapter {
                 mPath.setText(video.filePath);
                 root.setTag(video);
                 root.setOnClickListener(this);
+                String coverPath = VPlayerUtils.getVideoThumb(video.filePath,0l);
+                Uri uri = null;
+                if (!StringUtils.isEmpty(coverPath))
+                    uri = FileUtils.getImageContentUri(mContext, new File(coverPath));
+                if (uri != null) mCover.setImageURI(uri);
             } catch (IndexOutOfBoundsException e) {
                 Log.e(FileListAdapter.class.getSimpleName(),
                         "onBind: position ---> " + position + "\nerror ---> " + e.toString());
             } catch (ClassCastException e) {
+                Log.e(FileListAdapter.class.getSimpleName(),
+                        "onBind: position ---> " + position + "\nerror ---> " + e.toString());
+            } catch (NullPointerException e){
                 Log.e(FileListAdapter.class.getSimpleName(),
                         "onBind: position ---> " + position + "\nerror ---> " + e.toString());
             }

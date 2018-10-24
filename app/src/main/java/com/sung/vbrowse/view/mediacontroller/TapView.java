@@ -57,7 +57,7 @@ public class TapView extends View {
                 int upX = (int) event.getRawX();
                 int upY = (int) event.getRawY();
                 if (this.event != null) this.event.onTouchEnd(
-                        Math.abs(upX - lastX) <= 12 && Math.abs(upY - lastY) <= 12);
+                        Math.abs(upX - lastX) <= 12 && Math.abs(upY - lastY) <= 12,false);
                 //Log.e(TapView.class.getSimpleName(), "onTouchEvent: up");
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -75,7 +75,7 @@ public class TapView extends View {
                 float percent = (float)Math.abs(moveY) / (float)Math.abs(maxY);
 
                 if (this.event != null && Math.abs(moveY) > 15 && percent > 0.1){
-                    this.event.onTouchMoving(isLeftAreaTouch,isSlideUp,percent);
+                    this.event.onVerticalSlide(isLeftAreaTouch,isSlideUp,percent);
                 }
                 break;
         }
