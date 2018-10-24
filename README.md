@@ -12,10 +12,10 @@
 
 #### lib包说明
 
-> implementation project(':vitamio')//视频播放包
-> implementation 'com.jakewharton:butterknife:9.0.0-rc1'//view注入
-> implementation 'org.greenrobot:eventbus:3.1.1'//消息传递
-> implementation 'com.facebook.fresco:fresco:1.11.0'//图片加载
+> implementation project(':vitamio')//视频播放包  <br/>
+> implementation 'com.jakewharton:butterknife:9.0.0-rc1'//view注入 <br/>
+> implementation 'org.greenrobot:eventbus:3.1.1'//消息传递 <br/>
+> implementation 'com.facebook.fresco:fresco:1.11.0'//图片加载 <br/>
 
 
 
