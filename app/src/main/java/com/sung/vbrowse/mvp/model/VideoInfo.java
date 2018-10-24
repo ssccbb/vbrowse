@@ -1,5 +1,7 @@
 package com.sung.vbrowse.mvp.model;
 
+import android.graphics.Bitmap;
+
 import com.sung.vbrowse.utils.VPlayerHelper;
 
 import java.io.Serializable;
@@ -12,7 +14,7 @@ import java.io.Serializable;
 public class VideoInfo implements Serializable {
     public String filePath;
     public String mimeType;
-    public String thumbPath;
+    public Bitmap thumb;
     public String title;
     public VPlayerHelper.PlayerMode type;
     public String netUrl;

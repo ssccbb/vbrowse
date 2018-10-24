@@ -89,11 +89,7 @@ public class FileListAdapter extends RecyclerView.Adapter {
                 mPath.setText(video.filePath);
                 root.setTag(video);
                 root.setOnClickListener(this);
-                String coverPath = VPlayerUtils.getVideoThumb(video.filePath,0l);
-                Uri uri = null;
-                if (!StringUtils.isEmpty(coverPath))
-                    uri = FileUtils.getImageContentUri(mContext, new File(coverPath));
-                if (uri != null) mCover.setImageURI(uri);
+                mCover.setImageBitmap(video.thumb);
             } catch (IndexOutOfBoundsException e) {
                 Log.e(FileListAdapter.class.getSimpleName(),
                         "onBind: position ---> " + position + "\nerror ---> " + e.toString());

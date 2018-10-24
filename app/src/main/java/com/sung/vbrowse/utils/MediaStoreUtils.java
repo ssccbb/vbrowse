@@ -3,6 +3,7 @@ package com.sung.vbrowse.utils;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.provider.MediaStore;
 import android.util.Log;
 
@@ -194,15 +195,13 @@ public class MediaStoreUtils {
 
                 //获取当前Video对应的Id，然后根据该ID获取其Thumb
                 int id = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Video.Media._ID));
-                String selection = MediaStore.Video.Thumbnails.VIDEO_ID + "=?";
-                String[] selectionArgs = new String[]{
-                        id + ""
-                };
-                Cursor thumbCursor = context.getContentResolver().query(MediaStore.Video.Thumbnails.EXTERNAL_CONTENT_URI, thumbColumns, selection, selectionArgs, null);
-
-                if (thumbCursor.moveToFirst()) {
-                    info.thumbPath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Video.Thumbnails.DATA));
-
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inDither = false;
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                try {
+                    info.thumb = MediaStore.Video.Thumbnails.getThumbnail(context.getContentResolver(), id, MediaStore.Images.Thumbnails.MICRO_KIND, options);
+                }catch (NullPointerException e){
+                    Log.e(TAG,"query video thumb error-->" + e.toString());
                 }
 
                 //然后将其加入到videoList

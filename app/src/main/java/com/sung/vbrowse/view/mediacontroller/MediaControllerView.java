@@ -403,7 +403,6 @@ public class MediaControllerView extends FrameLayout implements View.OnClickList
 
     public void showVolumeDialog(){
         currentVolume = VPlayerUtils.getCurrentMediaVolume(this.getContext());
-        Log.e(MediaControllerView.class.getSimpleName(), "showVolumeDialog: "+currentVolume );
         volumeDialogController();
         mHandler.removeCallbacksAndMessages(null);
         mHandler.sendEmptyMessageDelayed(MSG_DIALOG_HIDE,MSG_UI_DELAY);
