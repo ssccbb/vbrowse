@@ -33,6 +33,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
+
 import butterknife.BindView;
 import io.vov.vitamio.Vitamio;
 
@@ -179,7 +181,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView,MediaCon
     @Override
     public void onLightChange(float light) {
         //改变亮度只能拿activity不能用context所以为了view不冗余不在mediacontrollerview中更改
-        VPlayerUtils.setScreenBrightness(this,(int) light);
+        VPlayerUtils.setScreenBrightness(this,light);
     }
 
     /********       controller callback        ********/
@@ -203,7 +205,6 @@ public class PlayerActivity extends BaseActivity implements IPlayerView,MediaCon
     public void onReceveEvent(VolumeEvent event){
         mControllerView.showVolumeDialog();
     }
-
 
     @Override
     protected void onPause() {
@@ -229,6 +230,7 @@ public class PlayerActivity extends BaseActivity implements IPlayerView,MediaCon
         }
 
         Intent goTo = new Intent(context, PlayerActivity.class);
+        video.thumb = null;
         goTo.putExtra(PlayerActivity.class.getSimpleName(), video);
         context.startActivity(goTo);
     }

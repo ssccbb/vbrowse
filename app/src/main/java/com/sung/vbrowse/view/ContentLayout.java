@@ -43,6 +43,7 @@ public class ContentLayout extends RelativeLayout {
         this.addView(this.view_empty,params);
         this.addView(this.view_error,params);
         this.addView(this.view_loading,params);
+        attributes.recycle();
         showContent();
         init();
     }

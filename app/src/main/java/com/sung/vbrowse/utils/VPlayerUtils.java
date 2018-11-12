@@ -130,9 +130,9 @@ public class VPlayerUtils {
         return value;
     }
 
-    public static void setScreenBrightness(Activity activity, int value) {
+    public static void setScreenBrightness(Activity activity, float value) {
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();
-        params.screenBrightness = value / 255f;
+        params.screenBrightness = value;
         activity.getWindow().setAttributes(params);
     }
 
